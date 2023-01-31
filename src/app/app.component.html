@@ -1,80 +1,132 @@
-<!-- <table  datatable [dtOptions]="dtOptions" class="table table-striped row-border hover">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Email</th>
-      <th>Gender</th>
-      <th>Ip Address</th>
-      <th>action</th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let data of tableData;">
-    <td>{{data?.id}}</td>
-    <td>{{data?.first_name}}</td>
-    <td>{{data?.last_name}}</td>
-    <td>{{data?.email}}</td>
-    <td>{{data?.gender}}</td>
-    <td>{{data?.ip_address}}</td>
-    <td></td>
-  </tr>
-</tbody>
-</table> -->
 <div class="container-fluid">
-  <div class="table-responsive"> 
-    <table datatable id="users-table" [dtTrigger]="dtTrigger" [dtOptions]="dtOptions" class="row-border hover table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>User Name</th>
-          <th>Email</th>
-          <th>User Agent</th>
-          <th>Domain</th>
-          <th>phone</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of tableData?.users">
-          <td>{{data?.id}}</td>
-          <td>
-            <div class="d-flex align-items-center">
-                <div *ngIf="data?.image" class="user-image">
-                  <img  [src]="data?.image" alt="">
-                </div>
-                <div>
-                  <h5 class="mb-1 font-size-14">{{data?.firstName}} {{data?.lastName}}</h5>
-                  <!-- <p class="text-muted mb-0 font-size-12">{{data?.email}}</p> -->
-                </div>
-            </div>
-            <!-- {{data?.firstName}} -->
-          </td>
-          <td>
-            <h5 class="mb-1 font-size-14">
-              {{data?.email}}
-            </h5>
-          </td>
-          <td>
-            {{data?.userAgent}}
-          </td>
-          <td>{{data?.domain}}</td>
-          <td>{{data?.phone}}</td>
-          <td>
-            <div class="d-flex align-items-center"> 
-              <button class="btn btn-primary btn-sm me-2" (click)="openModal(data,editModal)">edit</button>
-              <button class="btn btn-outline-danger btn-sm" (click)="openModal(data,deleteModal)">delete</button>
-            </div>
-          </td>
-        </tr>
-       
-      </tbody>
-    </table>
+  <div class="px-3">
+    <div class="d-flex w-100 py-3 " >
+
+      <button class="btn btn-primary ms-auto d-flex align-items-center justify-content-center" (click)="openModal(addUser)">+ Add User</button>
+    </div>
+    <div class="table-responsive"> 
+      <table datatable id="users-table" [dtTrigger]="dtTrigger" [dtOptions]="dtOptions" class="row-border hover table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>User Agent</th>
+            <th>Domain</th>
+            <th>phone</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of tableData?.users;index as i">
+            <td>{{i + 1}}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                  <div class="user-image shadow-sm me-2">
+                    <img  [src]="data?.image" *ngIf="data?.image" alt="">
+                    <div *ngIf="!data?.image" class="h-100 w-100 d-flex align-items-center justify-content-center text-dark font-size-22 fw-samibold text-center">
+                        <span class="m-auto text-capitalize">
+                          {{data?.firstName | slice:0:1}}
+                        </span>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 class="mb-1 font-size-14">{{data?.firstName}} {{data?.lastName}}</h5>
+                    <!-- <p class="text-muted mb-0 font-size-12">{{data?.email}}</p> -->
+                  </div>
+              </div>
+              <!-- {{data?.firstName}} -->
+            </td>
+            <td>
+              <h5 class="mb-1 font-size-14">
+                {{data?.email}}
+              </h5>
+            </td>
+            <td>
+              {{data?.userAgent ?? '-'}}
+            </td>
+            <td>{{data?.domain ?? '-'}}</td>
+            <td>{{data?.phone ?? '-'}}</td>
+            <td>
+              <div class="d-flex align-items-center"> 
+                <button class="btn btn-primary btn-sm me-2" (click)="openModal(editModal,data)">edit</button>
+                <button class="btn btn-outline-danger btn-sm" (click)="openModal(deleteModal,data)">delete</button>
+              </div>
+            </td>
+          </tr>
+         
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 
+<ng-template #addUser role="document" let-modal>
+
+  <div class="modal-header">
+      <h5 class="modal-title mt-0 text-capitalize">
+          Edit User Detail
+      </h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+      <!-- <div class="px-3"> -->
+      <form [formGroup]="updateform" (ngSubmit)="submitAddUser()">
+          <div class="mb-3">
+              <label for="fname" class="font-size-15 line-height-22 color-7D7F86 mb-1">First
+                  name</label>
+              <input type="text" class="form-control border-radius-5 bg-F8F8FB editModalinput"
+                  id="fname" formControlName="firstName">
+              <p class="mb-0 font-size-11 text-danger" *ngIf="submitted && !updateform?.controls?.firstName?.valid">Please
+                  Enter First Name</p>
+          </div>
+          <div class="mb-3">
+              <label for="lname" class="font-size-15 line-height-22 color-7D7F86 mb-1">Last
+                  name</label>
+              <input type="text" class="form-control border-radius-5 bg-F8F8FB editModalinput"
+                  id="lname" formControlName="lastName">
+              <p class="mb-0 font-size-11 text-danger" *ngIf="submitted && !updateform?.controls?.lastName?.valid">Please
+                  Enter Last Name</p>
+          </div>
+
+          <div class="mb-3">
+              <label for="domain" class="font-size-15 line-height-22 color-7D7F86 mb-1">Domain</label>
+              <input type="text" class="form-control border-radius-5 bg-F8F8FB editModalinput"
+                  id="domain" formControlName="domain">
+              <p class="mb-0 font-size-11 text-danger" *ngIf="submitted && !updateform?.controls?.domain?.valid">Please
+                  Enter Domain</p>
+          </div>
+
+          <div class="mb-3">
+              <label for="Phone" class="font-size-15 line-height-22 color-7D7F86 mb-1">Phone number</label>
+              <input type="tel" class="form-control border-radius-5 bg-F8F8FB editModalinput"
+                  id="Phone" formControlName="phone">
+              <p class="mb-0 font-size-11 text-danger" *ngIf="submitted && !updateform?.controls?.phone?.valid">Please
+                  Enter Phone</p>
+          </div>
+
+          <div>
+              <div class="mb-3">
+                  <label for="formrow-email-input" class="font-size-15 line-height-22 color-7D7F86 mb-1">
+                    User email
+                  </label>
+                  <input type="email" class="form-control border-radius-5 bg-F8F8FB editModalinput"
+                      id="formrow-email-input" formControlName="email">
+                  <p class="mb-0 font-size-11 text-danger" *ngIf="submitted && !updateform?.controls?.email?.valid">
+                      Please Enter Email Address</p>
+              </div>
+          </div>
+          <div class="text-start justify-content-start ps-0 border-0 pb-2">
+              <button
+                  class="btn btn-primary rounded font-size-14"
+                  [type]="'submit'">
+                  Add User
+              </button>
+          </div>
+      </form>
+  </div>
+</ng-template>
 <ng-template #editModal role="document" let-modal>
 
   <div class="modal-header">
@@ -134,12 +186,10 @@
   </div>
   <div class="modal-body">
     <div class="px-3">
-<div class="alert alert-danger" role="alert">
-  Are You sure to delete this user
-</div>
+      <div class="alert alert-danger" role="alert">
+        Are You sure to delete this user
+      </div>
     </div>
-
-
     <div class="text-start justify-content-start ps-0 border-0 pb-2">
           <button class="btn btn-primary rounded font-size-14"
               type='submit' (click)="removeUser(modal)">

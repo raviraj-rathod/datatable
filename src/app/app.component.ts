@@ -26,15 +26,19 @@ console.log(this.tableData)
 
  ngOnInit(): void {
    this.getLocalStorage();
-   this.randerTable();
+   setTimeout(() => { 
+     this.dtTrigger.next()
+   }, 1000);
   this.updateform = this.formBuilder.group(
     {
       firstName: ['', [Validators.required]],
       lastName: ['',[Validators.required]],
+      domain: ['',[]],
+      phone: ['',[]],
       email: ['',[Validators.required,Validators.email]]
     })
   this.dtOptions = {
-    dom: '<"top d-flex justify-content-between"fB>rt<"bottom"ilp><"clear">',
+    dom: '<"top d-flex justify-content-between"fB>rt<"bottom d-flex align-items-center my-4 "ilp><"clear">',
     select: true,
     buttons: [
       {
@@ -64,22 +68,28 @@ console.log(this.tableData)
   setLocastorage(){
     localStorage.setItem('tabledData',(JSON.stringify(this.tableData)))    
   }
-  openModal(item:any, modalName:any) {
+  openModal(modalName:any,item?:any) {
     console.log(item);
-    this.editDetail = item
-    this.updateform.controls.lastName.setValue(item.lastName)
-    this.updateform.controls.firstName.setValue(item.firstName)
-    this.updateform.controls.email.setValue(item.email) 
+    if(item){
+      this.editDetail = item
+      this.updateform.controls.lastName.setValue(item.lastName)
+      this.updateform.controls.firstName.setValue(item.firstName)
+      this.updateform.controls.email.setValue(item.email) 
+    }
     const ms = this.modalService.open(modalName,
-       { centered: true, modalDialogClass: "recipe-modal" });
+       { 
+        centered: true
+       }
+    );
     ms.dismissed.subscribe((res: any) => {
-      this.editDetail = {}
-
+      this.submitted = false
+      if(item){
+        this.editDetail = {}
+      }
     })
 
   }
   randerTable() {
-
     let dataTable = $("#users-table").DataTable();
     dataTable.destroy();
     this.dtTrigger.next();
@@ -110,5 +120,43 @@ console.log(this.tableData)
     });
     this.setLocastorage()
     modal.close();
+  }
+  // getimage(e:any) {
+  //   if (e.target.files[0].size / 1024 <= 400) {
+  
+  //       console.log(e.target.files[0]);
+  //       // this.liveChatSettings.headerImg = e.target.files[0];
+  //       // this.bgImages.header = e.target.files[0];
+  //       this.getImage(e);
+  //       // if (this.selectFile && this.selectFile.nativeElement && this.selectFile.nativeElement.value) {
+  //       //   this.selectFile.nativeElement.value = ''
+  //       // }
+  
+  //   } 
+  // }
+  // getImage(e:any) {
+  //   var reader = new FileReader();
+  //   reader.readAsDataURL(e.target.files[0]); // read file as data url
+  //   reader.onload = (event: any) => {
+  //     console.log(event.target.result);
+  //   };
+  // }
+  submitAddUser(){
+    let uid =Math.random().toString(16).slice(2)
+    this.submitted = true;
+    console.log(this.updateform);
+    if (this.updateform.invalid) return
+let obj = {
+  id:uid,
+  firstName:this.updateform.value.firstName,
+  lastName:this.updateform.value.lastName,
+  email:this.updateform.value.email,
+  domain:this.updateform.value.domain,
+  phone:this.updateform.value.phone,
+}
+this.tableData.users.push(obj);
+this.setLocastorage();
+this.randerTable();
+this.modalService.dismissAll();
   }
 }

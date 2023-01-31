@@ -9,3 +9,13 @@
      object-fit: cover;
     }
 }
+::ng-deep{
+    
+    .dataTables_info{
+        padding: 0 !important;
+        margin-right: 8px;
+    }
+    .dataTables_paginate{
+        margin-left: auto !important;
+    }
+}
