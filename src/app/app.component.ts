@@ -121,26 +121,6 @@ console.log(this.tableData)
     this.setLocastorage()
     modal.close();
   }
-  // getimage(e:any) {
-  //   if (e.target.files[0].size / 1024 <= 400) {
-  
-  //       console.log(e.target.files[0]);
-  //       // this.liveChatSettings.headerImg = e.target.files[0];
-  //       // this.bgImages.header = e.target.files[0];
-  //       this.getImage(e);
-  //       // if (this.selectFile && this.selectFile.nativeElement && this.selectFile.nativeElement.value) {
-  //       //   this.selectFile.nativeElement.value = ''
-  //       // }
-  
-  //   } 
-  // }
-  // getImage(e:any) {
-  //   var reader = new FileReader();
-  //   reader.readAsDataURL(e.target.files[0]); // read file as data url
-  //   reader.onload = (event: any) => {
-  //     console.log(event.target.result);
-  //   };
-  // }
   submitAddUser(){
     let uid =Math.random().toString(16).slice(2)
     this.submitted = true;
